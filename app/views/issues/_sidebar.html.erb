@@ -1,0 +1,17 @@
+<div class="inner-content">
+  <% if @issue %>
+    <%= render_view_hooks 'issues/widget' %>
+  <% end %>
+
+  <%= render 'layouts/hera/sidebar_collection',
+    category_id: nil,
+    collection: @issues,
+    name: 'Issues',
+    new_path: main_app.new_project_issue_path(current_project)
+  %>
+
+  <%= render 'issues/import_box' %>
+
+  <!-- Attachments -->
+  <%= render partial: 'attachments/attachment_box', locals: { attachments_node: current_project.plugin_uploads_node } %>
+</div>

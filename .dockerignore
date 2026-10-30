@@ -1,0 +1,64 @@
+# Bundler files
+/.bundle
+/vendor/bundle
+
+# Ignore environment and deployment files.
+/.env*
+/.kamal/*
+/config/deploy.yml
+/.do
+/bin/heroku
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/.keep
+
+# Ignore storage.
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/.keep
+
+# Ignore assets.
+/public/assets
+
+# Ignore configuration files
+/config/database.yml
+/config/smtp.yml
+
+# Ignore app-specific folders
+/attachments/
+/avatars/
+/config/credentials/*
+/templates/*
+
+# Ignore development and test files
+/.byebug_history
+/.claude
+/.devcontainer
+/.rspec
+/.rubocop*
+/.ruby-lsp
+/bin/rspec
+/bin/rubocop-ci
+/CHANGELOG.template
+/spec
+
+# Ignore Docker-related files
+/.dockerignore
+/Dockerfile*
+/compose.yaml
+
+# Ignore git directory.
+/.git
+/.gitignore
+/.github
+
+# Random
+/.DS_Store

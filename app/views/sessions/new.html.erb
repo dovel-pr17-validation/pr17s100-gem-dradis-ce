@@ -1,0 +1,17 @@
+<% content_for :title, 'Login' %>
+
+<h1>Login</h1>
+
+<%= form_tag session_path do %>
+  <div class="mb-3">
+    <%= label_tag :login, 'Username', class: 'form-label' %>
+    <%= text_field_tag :login, nil, placeholder: 'Choose any user name you want', class: 'form-control', autofocus: true %>
+  </div>
+  <div>
+    <%= label_tag :password, nil, class: 'form-label' %>
+    <%= password_field_tag :password, nil, class: 'form-control' %>
+  </div>
+  <div class="pt-1">
+    <%= submit_tag 'Log in', class: 'btn btn-block btn-primary mt-4', data: { behavior: 'animate-click' } %>
+  </div>
+<% end %>

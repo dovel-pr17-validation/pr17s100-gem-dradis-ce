@@ -1,0 +1,4 @@
+All Notifications
+<% if @notifications.any? %>
+  <%= link_to 'Mark all as read', notification_path(id: 'all'), class: 'actions align-self-center', method: :put, remote: true %>
+<% end %>

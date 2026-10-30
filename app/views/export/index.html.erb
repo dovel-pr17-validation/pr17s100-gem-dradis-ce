@@ -1,0 +1,40 @@
+<% content_for :title, 'Export' %>
+
+<% content_for :breadcrumbs do %>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to current_project.name, project_path(current_project) %>
+    </li>
+    <li class="breadcrumb-item active">
+      Export
+    </li>
+  </ol>
+<% end %>
+
+<% if Dradis::Plugins.with_feature(:export).empty? %>
+  <div class="content-container">
+    <div class="alert alert-error m-0">
+      <p class="lead">Sorry, we were unable to detect any export plugins. This is strange because Dradis ships with a number of plugins installed by default.</p>
+      <p class="mb-0">Check the Export section of your <code><%= Rails.root.join('Gemfile.plugins') %></code> file.</p>
+    </div>
+  </div>
+<% else %>
+
+  <ul id="plugin-chooser" class="tabs-container nav nav-tabs">
+    <% if !defined?(Dradis::Pro) %>
+      <%= render 'static_pages/export_tabs'%>
+    <% end %>
+
+    <%= render_view_hooks 'export/index-tabs', feature: :export %>
+  </ul>
+  <div class="content-container">
+    <div class="tab-content">
+      <% if !defined?(Dradis::Pro) %>
+        <%= render 'static_pages/export_content'%>
+      <% end %>
+
+      <%= render_view_hooks 'export/index-content', feature: :export %>
+    </div>
+  </div>
+
+<% end %>

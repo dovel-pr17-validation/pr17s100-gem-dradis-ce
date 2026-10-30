@@ -1,0 +1,18 @@
+<%= turbo_frame_tag 'issues-summary' do %>
+  <%= render 'projects/dashboard/issues/grouping_selector' if @groupings.many? %>
+
+  <% if @issues.any? %>
+    <%= tag.div class: 'issue-chart', data: { behavior: 'issue-chart', issues_summary_target: 'chart', groups: @groups.map(&:chart_data) } %>
+
+    <div class="issues-accordion" role="tablist">
+      <%= render partial: 'projects/dashboard/issues/group', collection: @groups.select { |group| group.count.positive? }, as: :group %>
+    </div>
+  <% else %>
+    <%= render 'shared/empty_state',
+      actions_partial: 'projects/dashboard/issues/empty_state_actions',
+      name: 'issue',
+      docs_link: 'https://dradis.com/support/guides/projects/issues.html',
+      text: 'Use issues to represent vulnerabilities or findings.'
+    %>
+  <% end %>
+<% end %>

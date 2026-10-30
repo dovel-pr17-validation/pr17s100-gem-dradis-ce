@@ -1,0 +1,11 @@
+<%= yield(:search) if content_for?(:search) %>
+
+<% cache(['navbar-left', Dradis::Plugins.with_feature(:addon)]) do %>
+  <li class="nav-item">
+    <%= link_to main_app.static_projects_path, class: 'nav-link' do %>
+      <span>Projects</span>
+    <% end %>
+  </li>
+
+  <%= render 'layouts/hera/navbar/main_nav/tools_menu' %>
+<% end %>

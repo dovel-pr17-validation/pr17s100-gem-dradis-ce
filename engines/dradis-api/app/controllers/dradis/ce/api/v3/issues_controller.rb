@@ -1,0 +1,78 @@
+module Dradis::CE::API
+  module V3
+    class IssuesController < Dradis::CE::API::APIController
+      include EventPublisher
+      include Dradis::CE::API::ProjectScoped
+
+      before_action :set_issue, except: [:index]
+      before_action :validate_state, only: [:create, :update]
+
+      def index
+        @issues = Search.new(
+          query: params[:q],
+          scope: :issues,
+          page: params[:page],
+          project: current_project
+        ).results
+
+        @issues = @issues.sort
+      end
+
+      def show
+      end
+
+      def create
+        @issue.assign_attributes(issue_params)
+        @issue.author   = current_user.email
+        @issue.category = Category.issue
+        @issue.node     = current_project.issue_library
+
+        if @issue.save
+          @issue.tag_from_field_content!
+          publish_event('issue.created', @issue.to_event_payload)
+          render status: 201, location: dradis_api.issue_url(@issue)
+        else
+          render_validation_errors(@issue)
+        end
+      end
+
+      def update
+        if @issue.update(issue_params)
+          publish_event('issue.updated', @issue.to_event_payload)
+          render node: @node
+        else
+          render_validation_errors(@issue)
+        end
+      end
+
+      def destroy
+        @issue.destroy
+        publish_event('issue.destroyed', @issue.to_event_payload)
+        render_successful_destroy_message
+      end
+
+      private
+
+      def issue_params
+        params.require(:issue).permit(:state, :text)
+      end
+
+      def set_issue
+        if params[:id]
+          @issue = current_project.issues.find(params[:id])
+        else
+          @issue = current_project.issues.new
+        end
+      end
+
+      def validate_state
+        return if issue_params[:state].nil?
+
+        unless Issue.states.keys.include? issue_params[:state]
+          @issue.errors.add(:state, 'invalid value.')
+          render_validation_errors(@issue)
+        end
+      end
+    end
+  end
+end

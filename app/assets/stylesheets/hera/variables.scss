@@ -1,0 +1,38 @@
+@import 'bootstrap/functions';
+@import 'hera/modules/colors';
+
+// Theme
+$light: $brand-200;
+$primary: $brand-500;
+$dark: $brand-900;
+
+// Bootstrap Overrides
+$green: $green-500;
+$orange: $orange-500;
+$red: $red-500;
+$yellow: $yellow-500;
+
+// Text (non-color, compile-time only)
+$text-small: 0.9rem;
+
+// Shadows (compile-time only — used inside rgba(), cannot be CSS custom properties)
+$shadow-color-light: $grey-200;
+$shadow-color-dark: $grey-800;
+
+// Navbar
+$navbar-height: calc(3.2rem - 1px); // 1px to account for border
+
+// Sidebar
+$sidebar-width: 14rem;
+$sidebar-width-collapsed: 0.25rem;
+$sidebar-width-multiplier: 1.25;
+
+// Layout
+$focus-shadow: 0 0 0 0.2rem unquote(#{$primary}80) !important;
+
+// Spacing
+$margin: 1.5rem;
+$padding: 1.5rem;
+
+// This line must be last to override BS5 colors.
+@import 'bootstrap/variables';

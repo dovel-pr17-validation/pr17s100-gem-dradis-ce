@@ -1,0 +1,54 @@
+<% content_for :title, "#{@node.label} - properties" %>
+
+<% content_for :breadcrumbs do %>
+  <%= render partial: 'breadcrumbs' %>
+<% end %>
+
+<ul id="node-tabs" class="tabs-container nav nav-tabs main-tabs">
+  <li class="nav-item">
+    <a href="#evidence-tab" data-bs-toggle="tab" class="nav-link"><i class="fa-solid fa-flag"></i> Evidence</a>
+  </li>
+  <li class="nav-item">
+    <a href="#notes-tab" data-bs-toggle="tab" class="nav-link"><i class="fa-regular fa-file-text"></i> Notes</a>
+  </li>
+  <li class="nav-item">
+    <a href="#methodology-tab" data-bs-toggle="tab" class="nav-link"><i class="fa-brands fa-trello"></i> Methodology</a>
+  </li>
+  <li class="nav-item">
+    <a href="#properties-tab" data-bs-toggle="tab" class="nav-link active">
+      <% if @node.type_id == Node::Types::HOST %>
+        <i class="fa-solid fa-laptop"></i>
+      <% else %>
+        <i class="fa-solid fa-cogs"></i>
+      <% end %>
+      Properties
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="#activity-tab" data-bs-toggle="tab" class="nav-link"><i class="fa-solid fa-rss"></i> Recent activity</a>
+  </li>
+  <li class="dropdown dots-dropdown">
+    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" data-behavior="nodes-more-dropdown"><i class="fa-solid fa-ellipsis-h fa-lg"></i><span class="visually-hidden">Toggle menu</span></a>
+    <div class="dropdown-menu">
+      <a href="#modal_add_node" class="dropdown-item" tabindex="-1" data-bs-toggle="modal" data-parent-id="<%= @node.id %>" data-parent-label="<%= @node.label %>"><i class="fa-solid fa-plus fa-fw"></i> Add subnode</a>
+      <a href="#modal_rename_node" class="dropdown-item" tabindex="-1" data-bs-toggle="modal"><i class="fa-solid fa-pencil fa-fw"></i> Rename</a>
+      <a href="#modal_move_node" class="dropdown-item" tabindex="-1" data-bs-toggle="modal"><i class="fa-solid fa-mail-forward fa-fw"></i> Move</a>
+      <a href="#modal_merge_node" class="dropdown-item" tabindex="-1" data-bs-toggle="modal"><i class="fa-solid fa-compress fa-fw"></i> Merge</a>
+      <a href="#modal_delete_node" class="dropdown-item text-error-hover" tabindex="-1" data-bs-toggle="modal"><i class="fa-solid fa-trash fa-fw"></i> Delete</a>
+    </div>
+  </li>
+</ul>
+
+<div class="content-container">
+  <div class="tab-content">
+    <%= render 'nodes/show/activities' %>
+    <% if defined?(Dradis::Pro) %>
+      <%= render 'nodes/show/boards' %>
+    <% else %>
+      <%= render 'static_pages/boards' %>
+    <% end %>
+    <%= render 'nodes/show/evidence' %>
+    <%= render 'nodes/show/notes' %>
+    <%= render 'nodes/show/properties' %>
+  </div>
+</div>

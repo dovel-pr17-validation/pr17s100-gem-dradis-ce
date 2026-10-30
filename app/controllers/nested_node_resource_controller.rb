@@ -1,0 +1,40 @@
+# A controller for pages related to a Node and its notes and evidence.
+class NestedNodeResourceController < AuthenticatedController
+  include ContentFromTemplate
+  include EventPublisher
+  include ProjectScoped
+
+  before_action :find_or_initialize_node
+
+  layout 'nested_node_resource'
+
+  protected
+
+  def find_or_initialize_node
+    # FIXME: this is not great design with different branches for different
+    # child controllers.
+    if params[:controller] == 'nodes'
+      if params[:id]
+        @node = current_project.nodes.includes(
+          :notes, :evidence, evidence: [:issue, { issue: :tags }]
+        ).find(params[:id])
+      else
+        @node = Node.new(node_params)
+      end
+    else
+      @node = current_project.nodes.includes(
+        :activities, :children, :notes, :evidence, evidence: [:issue, { issue: :tags }]
+      ).find(params[:node_id])
+    end
+  end
+
+  private
+
+  # Override EventPublisher#event_action_payload to use the semantic action
+  # name ('create') instead of the RESTful controller action
+  # ('create_multiple') so the activity feed shows the correct verb.
+  def event_action_payload
+    action_map = { 'create_multiple' => 'create' }
+    super.merge(action: action_map.fetch(action_name, action_name))
+  end
+end

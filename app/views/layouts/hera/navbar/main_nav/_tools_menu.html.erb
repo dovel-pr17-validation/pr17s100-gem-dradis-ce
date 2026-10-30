@@ -1,0 +1,15 @@
+<li class="nav-item dropdown">
+  <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="tools-dropdown">
+    Tools
+    <b class="caret"></b>
+  </a>
+
+  <ul class="dropdown-menu" aria-labelledby="tools-dropdown">
+    <%= render_view_hooks('tools_menu') %>
+    <% if !defined?(Dradis::Pro) %>
+      <li><div class="dropdown-divider"></div></li>
+      <li><%= link_to 'Issue Library', main_app.static_issuelib_path, class: 'dropdown-item' %></li>
+      <li><%= link_to 'Remediation Tracker', main_app.static_remediationtracker_path, class: 'dropdown-item' %></li>
+    <% end %>
+  </ul>
+</li>

@@ -1,0 +1,9 @@
+<span class="fa-solid fa-bug"></span>
+
+<%= link_to row.title, project_issue_path(current_project, row), class: "search-match-title" %>
+
+<p class="result-details">Last updated: <%= local_time_ago(row.updated_at) %></p>
+
+<div class="match-snippet">
+  <%= text_snippet row.text, params[:q] %>
+</div>

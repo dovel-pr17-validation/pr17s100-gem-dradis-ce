@@ -1,0 +1,45 @@
+# Bundler files
+/.bundle
+/vendor/bundle/
+/vendor/cache/*darwin*
+
+# Ignore environment and deployment files
+/.env*
+/.kamal/*
+/config/deploy.yml
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+!/tmp/pids/.keep
+
+# Ignore uploaded files in development.
+/storage/*
+!/storage/.keep
+
+# Ignore assets.
+/public/assets
+
+# Ignore configuration files
+/config/database.yml
+/config/master.key
+/config/smtp.yml
+
+# Ignore app-specific folders
+/backup/
+/config/credentials/
+/sample_files/
+/Gemfile.plugins
+
+# Ignore development and test files
+.byebug_history
+/spec/.examples.txt
+
+# Vagrant
+.vagrant/
+
+# Random
+.DS_Store
+*.swp

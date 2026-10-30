@@ -1,0 +1,67 @@
+<% content_for :title, "#{@node.label} - view note" %>
+
+<% if @conflicting_revisions %>
+  <%= render "projects/conflicting_revisions", conflicts: @conflicting_revisions, record: @note %>
+<% end %>
+
+<% content_for :breadcrumbs do %>
+  <%= render partial: 'breadcrumbs' %>
+<% end %>
+
+<ul class="tabs-container nav nav-tabs main-tabs">
+  <li class="nav-item"><a class="nav-link active" href="#info-tab" data-bs-toggle="tab"><i class="fa-solid fa-file-text"></i> Note</a></li>
+</ul>
+
+<div class="row p-0">
+  <div class="col-12">
+    <div class="content-container">
+      <div class="tab-content">
+        <div class="tab-pane active" id="info-tab">
+          <% cache ['note-information-tab', @note] do %>
+            <div id="<%= dom_id(@note) %>" class="note-text-inner">
+              <h4 class="header-underline">
+                <span class="text-truncate" title="<%= @note.title %>"><%= @note.title %></span>
+                <%= render partial: 'shared/liquid_loading' %>
+                <%= render partial: 'actions' %>
+              </h4>
+              <%= render partial: 'shared/textile_content', locals: { record: @note, preview_path: preview_project_node_note_path(current_project, @note.node, @note) } %>
+              <div class="author-info">
+                <span class="ms-auto">Author: <%= @note.author || 'n/a' %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-container">
+      <%= content_tag :div,
+          spinner_tag,
+          data: {
+            behavior: 'fetch fetch-comments',
+            path: comments_path(
+              comment: {
+                commentable_type: @note.class,
+                commentable_id: @note.id
+              }
+            )
+          }
+        %>
+    </div>
+
+    <div class="content-container">
+      <%= content_tag :div,
+          spinner_tag,
+          data: {
+            behavior: 'fetch fetch-subscriptions',
+            path: subscriptions_path(
+              subscription: {
+                subscribable_type: @note.class,
+                subscribable_id: @note.id
+              }
+            )
+          }
+        %>
+    </div>
+  </div>
+</div>

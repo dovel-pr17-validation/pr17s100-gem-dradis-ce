@@ -1,0 +1,7 @@
+{
+"success": <%= @modified %>,
+<% if tag = @issue.tags.first %>
+  "issue_link": "<%= j render(partial: 'issues/issue', locals: { issue: @issue }, formats: :html) %>",
+  "tag_cell": "<%= j "<td data-behavior=\"tag\" data-sort=\"#{tag.position}\"><span class=\"issue-severity\"><i class=\"fa-solid fa-tag\" style=\"color:#{tag.color}\"></i> #{tag.display_name}</span></td>".html_safe %>"
+<% end %>
+}

@@ -1,0 +1,38 @@
+<div class="tag-input" data-behavior="tag-input">
+  <%= f.input :tag_list, as: :hidden, input_html: { data: { behavior: 'tag-list' } } %>
+  Tag:
+  <div class="dropdown">
+    <button class="btn dropdown-toggle" data-bs-toggle="dropdown" type="button">
+      <% if @issue.tags.any? %>
+        <span class="tag" data-behavior="tag-label" style="color: <%= @issue.tags.first.color %>">
+          <i class="fa-solid fa-tag fa-fw"></i>
+          <%= @issue.tags.first.display_name %>
+        </span>
+      <% else %>
+        <span class="tag" data-behavior="tag-label" style="color: var(--untagged-color)">
+          <i class="fa-solid fa-tag fa-fw"></i>
+          No tag
+        </span>
+      <% end %>
+    </button>
+    <div class="dropdown-menu">
+      <% @tags.each do |tag| %>
+        <%= link_to 'javascript:void(0)', class: 'dropdown-item',  style: "color: #{ tag.color }", data: { behavior: 'tag-link', tag: h(tag.name) } do %>
+          <i class="fa-solid fa-tag fa-fw me-1"></i>
+          <%= h(tag.display_name) %>
+        <% end %>
+      <% end %>
+      <%= link_to 'javascript:void(0)', class: 'dropdown-item',  style: "color: var(--untagged-color)", data: { behavior: 'tag-link', tag: "" } do %>
+        <i class="fa-solid fa-tag fa-fw me-1"></i>
+        No tag
+      <% end %>
+      <div class="divider"></div>
+      <%= link_to new_project_tag_path(current_project), remote: true, class: 'dropdown-item' do %>
+        <i class="fa-solid fa-plus fa-fw me-1"></i> Add new tag
+      <% end %>
+      <%= link_to project_tags_path(current_project), class: 'dropdown-item' do %>
+        <i class="fa-solid fa-tags fa-fw me-1"></i> Manage tags
+      <% end %>
+    </div>
+  </div>
+</div>

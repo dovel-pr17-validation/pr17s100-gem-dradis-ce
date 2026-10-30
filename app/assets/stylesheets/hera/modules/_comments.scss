@@ -1,0 +1,102 @@
+.comment-feed {
+  .actions {
+    visibility: hidden;
+  }
+
+  .comment-wrapper {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+
+    .comment {
+      margin-top: 0.5rem;
+      padding: 15px;
+      border-radius: 5px;
+      background-color: var(--primary-bg);
+
+      .content {
+        margin-left: 2.5rem;
+        padding: 1em 1em 0;
+
+        p:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      @include comment-item;
+
+      &:hover {
+        background-color: var(--secondary-bg);
+
+        .actions.current_user {
+          visibility: visible;
+        }
+      }
+    }
+  }
+
+  .editor-field {
+    .textarea-container > textarea {
+      min-height: 8rem;
+    }
+  }
+
+  input[type='submit'] {
+    margin-left: 35px;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  .sticky-toolbar > .editor-toolbar {
+    top: 2.9rem !important;
+  }
+}
+
+.subscriptions-feed {
+  .gravatar {
+    float: none;
+  }
+}
+
+// tribute @-mentions plugin styles
+.tribute-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: auto;
+  max-height: 300px;
+  max-width: 500px;
+  overflow: auto;
+  display: block;
+  z-index: 999999;
+
+  img {
+    border-radius: 50%;
+  }
+
+  .menu-highlighted {
+    font-weight: bold;
+  }
+
+  ul {
+    margin: 0;
+    margin-top: 2px;
+    padding: 0;
+    background: var(--secondary-bg);
+
+    li {
+      padding: 5px 5px;
+      cursor: pointer;
+
+      &.highlight,
+      &:hover {
+        background: var(--secondary-bg-strong);
+      }
+
+      span {
+        font-weight: bold;
+      }
+    }
+  }
+}

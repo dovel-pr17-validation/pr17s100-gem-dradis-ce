@@ -1,0 +1,28 @@
+<div class="actions">
+  <span class="action">
+    <%=
+      link_to(
+        "#modal-board-edit-#{@board.id}",
+        data: { bs_toggle: 'modal' },
+        tabindex: -1
+      ) do
+    %>
+    <i class="fa-solid fa-pencil fa-fw"></i> Edit
+  <% end %>
+</span>
+<div class="dropdown dots-dropdown">
+  <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-ellipsis-h fa-lg"></i><span class="visually-hidden">Toggle menu</span></a>
+  <div class="dropdown-menu">
+    <%=
+        link_to(
+          [current_project, @board],
+          class: 'dropdown-item text-error',
+          data: { confirm: "Are you sure?\n\nProceeding will delete this methodology from the project, as well as with any associated lists and tasks." },
+          method: 'delete',
+          tabindex: -1
+        ) do %>
+      <i class="fa-solid fa-trash fa-fw"></i> Delete
+    <% end %>
+  </div>
+</div>
+</div>

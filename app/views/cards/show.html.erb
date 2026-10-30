@@ -1,0 +1,91 @@
+<% content_for :title, @card.name %>
+
+<% content_for :breadcrumbs do %>
+  <%= render partial: 'breadcrumbs' %>
+<% end %>
+
+<%= render partial: 'poller_alerts' unless request.xhr? %>
+
+<div id="js-card">
+  <div class='d-none' data-behavior='breadcrumbs-xhr'>
+    <%= render partial: 'breadcrumbs' %>
+  </div>
+
+  <ul class="tabs-container nav nav-tabs main-tabs">
+    <li class="nav-item">
+      <a href="#info-tab" data-bs-toggle="tab" class="nav-link active"><i class="fa-regular fa-address-card"></i> Card</a>
+    </li>
+  </ul>
+
+  <div class="row p-0">
+    <div class="col-12">
+      <div class="content-container">
+        <div class="tab-content">
+          <div class="tab-pane active" id="info-tab">
+            <% cache ['card-information-tab', @card] do %>
+              <div class="note-text-inner">
+                <h4 class="mb-4 header-underline">
+                  <span class="text-truncate" title="<%= @card.name %>"><%= @card.name %></span>
+                  <%= render partial: 'actions' %>
+                </h4>
+
+                <div class="card-description">
+                  <div class="content-textile" data-behavior="content-textile">
+                    <%= markup(@card.description) %>
+                  </div>
+                </div>
+
+                <% if @card.due_date %>
+                  <div class="card-due-date mt-4 pt-2">
+                    <h5>Due Date</h5>
+                    <%= @card.due_date %>
+                  </div>
+                <% end %>
+
+                <% if @card.assignees.any? %>
+                  <div class="card-assignees mt-4 pt-2 clearfix">
+                    <h5>Assignees</h5>
+                    <% @card.assignees.each do |user| %>
+                      <%= avatar_image(user, include_name: true, size: 30) %>
+                    <% end %>
+                  </div>
+                <% end %>
+              <% end %>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-container">
+        <%= content_tag :div,
+            spinner_tag,
+            data: {
+              behavior: 'fetch fetch-comments',
+              path: comments_path(
+                comment: {
+                  commentable_type: @card.class,
+                  commentable_id: @card.id
+                }
+              )
+            }
+          %>
+      </div>
+
+      <div class="content-container">
+        <%= content_tag :div,
+            spinner_tag,
+            data: {
+              behavior: 'fetch fetch-subscriptions',
+              path: subscriptions_path(
+                subscription: {
+                  subscribable_type: @card.class,
+                  subscribable_id: @card.id
+                }
+              )
+            }
+          %>
+      </div>
+    </div>
+  </div>
+</div>

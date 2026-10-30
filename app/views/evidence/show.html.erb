@@ -1,0 +1,93 @@
+<% content_for :title, "View evidence for #{@node.label} / #{@evidence.issue.title}" %>
+
+<% if @conflicting_revisions %>
+  <%= render "projects/conflicting_revisions", conflicts: @conflicting_revisions, record: @evidence %>
+<% end %>
+
+<% content_for :breadcrumbs do %>
+  <%= render partial: 'breadcrumbs' %>
+<% end %>
+
+<ul class="tabs-container nav nav-tabs main-tabs">
+  <li class="nav-item">
+    <a href="#evidence-tab" data-bs-toggle="tab" class="nav-link active">
+      <%= colored_icon_for_model(@evidence, 'fa-flag')%> Evidence
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="#info-tab" data-bs-toggle="tab" class="nav-link">
+      <i class="fa-solid fa-bug"></i> Information
+    </a>
+  </li>
+</ul>
+
+<div class="row p-0">
+  <div class="col-12">
+    <div class="content-container">
+      <div class="tab-content">
+        <div class="tab-pane active" id="evidence-tab">
+          <% cache ['evidence-evidence-tab', @evidence] do %>
+            <div class="note-text-inner">
+              <h4 class="header-underline">
+                <span class="text-truncate" title="Evidence for this instance">Evidence for this instance</span>
+                <%= render partial: 'shared/liquid_loading' %>
+                <%= render partial: 'actions' %>
+              </h4>
+              <%= render partial: 'shared/textile_content', locals: { record: @evidence, preview_path: preview_project_node_evidence_path(current_project, @evidence.node, @evidence) } %>
+              <div class="author-info">
+                <span class="ms-auto">Author: <%= @evidence.author || 'n/a' %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <% cache ['evidence-information-tab', @issue] do %>
+          <div class="tab-pane" id="info-tab">
+            <h4 class="header-underline align-items-center">
+              Issue information
+              <span class="actions">
+                <%= link_to project_issue_path(current_project, @issue) do %>
+                  <i class="fa-solid fa-external-link" aria-hidden="true"></i> Open
+                <% end %> -
+                <%= tag_and_name_for(@issue) %>
+              </span>
+            </h4>
+            <div id="<%= dom_id(@issue) %>_text" class="content-textile" data-behavior="content-textile">
+              <%= markup(@issue.text) %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="content-container">
+      <%= content_tag :div,
+          spinner_tag,
+          data: {
+            behavior: 'fetch fetch-comments',
+            path: comments_path(
+              comment: {
+                commentable_type: @evidence.class,
+                commentable_id: @evidence.id
+              }
+            )
+          }
+        %>
+    </div>
+
+    <div class="content-container">
+      <%= content_tag :div,
+          spinner_tag,
+          data: {
+            behavior: 'fetch fetch-subscriptions',
+            path: subscriptions_path(
+              subscription: {
+                subscribable_type: @evidence.class,
+                subscribable_id: @evidence.id
+              }
+            )
+          }
+        %>
+    </div>
+  </div>
+</div>

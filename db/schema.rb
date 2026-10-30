@@ -1,0 +1,356 @@
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema[8.0].define(version: 2026_08_14_000000) do
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.integer "record_id", null: false
+    t.integer "blob_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", precision: nil, null: false
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "activities", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "trackable_type", null: false
+    t.integer "trackable_id", null: false
+    t.string "action", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["created_at"], name: "index_activities_on_created_at"
+    t.index ["trackable_id", "trackable_type"], name: "index_activities_on_trackable_id_and_trackable_type"
+    t.index ["user_id"], name: "index_activities_on_user_id"
+  end
+
+  create_table "boards", force: :cascade do |t|
+    t.string "name"
+    t.integer "node_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["node_id"], name: "index_boards_on_node_id"
+  end
+
+  create_table "cards", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.date "due_date"
+    t.integer "list_id"
+    t.integer "previous_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["list_id"], name: "index_cards_on_list_id"
+    t.index ["previous_id"], name: "index_cards_on_previous_id"
+  end
+
+  create_table "cards_users", id: false, force: :cascade do |t|
+    t.integer "card_id", null: false
+    t.integer "user_id", null: false
+    t.index ["card_id", "user_id"], name: "index_cards_users_on_card_id_and_user_id"
+    t.index ["user_id", "card_id"], name: "index_cards_users_on_user_id_and_card_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "content"
+    t.string "commentable_type"
+    t.integer "commentable_id"
+    t.integer "user_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "inline_thread_id"
+    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id"
+    t.index ["inline_thread_id"], name: "index_comments_on_inline_thread_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "configurations", force: :cascade do |t|
+    t.string "name"
+    t.string "value"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["name"], name: "index_configurations_on_name", unique: true
+  end
+
+  create_table "dradis_plugins_echo_agents", force: :cascade do |t|
+    t.integer "agent_type", default: 1, null: false
+    t.boolean "enabled", default: true, null: false
+    t.string "model_override"
+    t.string "name", null: false
+    t.text "env"
+    t.integer "provider_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_dradis_plugins_echo_agents_on_name", unique: true
+    t.index ["provider_id"], name: "index_dradis_plugins_echo_agents_on_provider_id"
+  end
+
+  create_table "dradis_plugins_echo_messages", force: :cascade do |t|
+    t.integer "session_id", null: false
+    t.integer "parent_id"
+    t.integer "user_id"
+    t.integer "role", default: 0, null: false
+    t.integer "status", default: 0, null: false
+    t.text "content"
+    t.text "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_dradis_plugins_echo_messages_on_parent_id"
+    t.index ["session_id"], name: "index_dradis_plugins_echo_messages_on_session_id"
+    t.index ["user_id"], name: "index_dradis_plugins_echo_messages_on_user_id"
+  end
+
+  create_table "dradis_plugins_echo_prompts", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "icon", null: false
+    t.string "scope", null: false
+    t.text "prompt", null: false
+    t.integer "visibility", default: 0, null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_dradis_plugins_echo_prompts_on_user_id"
+  end
+
+  create_table "dradis_plugins_echo_providers", force: :cascade do |t|
+    t.string "address"
+    t.text "api_key"
+    t.string "model"
+    t.string "name", null: false
+    t.string "type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "dradis_plugins_echo_sessions", force: :cascade do |t|
+    t.integer "agent_id", null: false
+    t.integer "user_id"
+    t.string "record_type", null: false
+    t.integer "record_id", null: false
+    t.integer "status", default: 0, null: false
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_id"], name: "index_dradis_plugins_echo_sessions_on_agent_id"
+    t.index ["record_type", "record_id"], name: "index_dradis_plugins_echo_sessions_on_record"
+    t.index ["user_id"], name: "index_dradis_plugins_echo_sessions_on_user_id"
+  end
+
+  create_table "editing_sessions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "record_type", null: false
+    t.integer "record_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["record_type", "record_id"], name: "index_editing_sessions_uniqueness", unique: true
+    t.index ["user_id"], name: "index_editing_sessions_on_user_id"
+  end
+
+  create_table "evidence", force: :cascade do |t|
+    t.integer "node_id"
+    t.integer "issue_id"
+    t.text "content"
+    t.string "author"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "state", default: 0, null: false
+    t.index ["issue_id"], name: "index_evidence_on_issue_id"
+    t.index ["node_id"], name: "index_evidence_on_node_id"
+  end
+
+  create_table "inline_threads", force: :cascade do |t|
+    t.string "commentable_type", null: false
+    t.integer "commentable_id", null: false
+    t.integer "user_id", null: false
+    t.text "anchor", null: false
+    t.integer "resolved_by_id"
+    t.integer "version_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "resolved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commentable_type", "commentable_id", "status"], name: "index_inline_threads_on_commentable_and_status"
+    t.index ["commentable_type", "commentable_id"], name: "index_inline_threads_on_commentable"
+    t.index ["resolved_by_id"], name: "index_inline_threads_on_resolved_by_id"
+    t.index ["user_id"], name: "index_inline_threads_on_user_id"
+    t.index ["version_id"], name: "index_inline_threads_on_version_id"
+  end
+
+  create_table "lists", force: :cascade do |t|
+    t.string "name"
+    t.integer "board_id"
+    t.integer "previous_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["board_id"], name: "index_lists_on_board_id"
+    t.index ["previous_id"], name: "index_lists_on_previous_id"
+  end
+
+  create_table "logs", force: :cascade do |t|
+    t.string "uid"
+    t.text "text"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+  end
+
+  create_table "mapping_fields", force: :cascade do |t|
+    t.integer "mapping_id", null: false
+    t.string "source_field"
+    t.string "destination_field"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mapping_id"], name: "index_mapping_fields_on_mapping_id"
+  end
+
+  create_table "mappings", force: :cascade do |t|
+    t.string "component"
+    t.string "source"
+    t.string "destination"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "nodes", force: :cascade do |t|
+    t.integer "type_id"
+    t.string "label"
+    t.integer "parent_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "position"
+    t.text "properties", limit: 1073741823
+    t.integer "children_count", default: 0, null: false
+    t.index ["parent_id"], name: "index_nodes_on_parent_id"
+    t.index ["type_id"], name: "index_nodes_on_type_id"
+  end
+
+  create_table "notes", force: :cascade do |t|
+    t.string "author"
+    t.text "text"
+    t.integer "node_id"
+    t.integer "category_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "state", default: 0, null: false
+    t.index ["category_id"], name: "index_notes_on_category_id"
+    t.index ["node_id"], name: "index_notes_on_node_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "action"
+    t.datetime "read_at", precision: nil
+    t.string "notifiable_type"
+    t.integer "notifiable_id"
+    t.integer "actor_id"
+    t.integer "recipient_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
+    t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.string "subscribable_type"
+    t.integer "subscribable_id"
+    t.integer "user_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["subscribable_id", "subscribable_type", "user_id"], name: "index_subscriptions_on_subscribablue_and_user", unique: true
+    t.index ["subscribable_type", "subscribable_id"], name: "index_subscriptions_on_subscribable_type_and_subscribable_id"
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
+  end
+
+  create_table "taggings", force: :cascade do |t|
+    t.integer "tag_id"
+    t.string "taggable_type"
+    t.integer "taggable_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["tag_id", "taggable_id", "taggable_type"], name: "index_taggings_on_tag_id_and_taggable_id_and_taggable_type", unique: true
+    t.index ["tag_id"], name: "index_taggings_on_tag_id"
+    t.index ["taggable_type", "taggable_id"], name: "index_taggings_on_taggable_type_and_taggable_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "taggings_count", default: 0, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "position"
+    t.index ["name"], name: "index_tags_on_name"
+    t.index ["taggings_count"], name: "index_tags_on_taggings_count"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email"
+    t.string "password_hash"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.text "preferences"
+  end
+
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.integer "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", limit: 1073741823
+    t.datetime "created_at", precision: nil
+    t.integer "project_id"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["project_id"], name: "index_versions_on_project_id"
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "boards", "nodes", on_delete: :cascade
+  add_foreign_key "comments", "inline_threads"
+  add_foreign_key "comments", "users", on_delete: :nullify
+  add_foreign_key "dradis_plugins_echo_agents", "dradis_plugins_echo_providers", column: "provider_id"
+  add_foreign_key "dradis_plugins_echo_messages", "dradis_plugins_echo_messages", column: "parent_id"
+  add_foreign_key "dradis_plugins_echo_messages", "dradis_plugins_echo_sessions", column: "session_id"
+  add_foreign_key "dradis_plugins_echo_messages", "users", on_delete: :nullify
+  add_foreign_key "dradis_plugins_echo_prompts", "users"
+  add_foreign_key "dradis_plugins_echo_sessions", "dradis_plugins_echo_agents", column: "agent_id"
+  add_foreign_key "dradis_plugins_echo_sessions", "users", on_delete: :nullify
+  add_foreign_key "editing_sessions", "users"
+  add_foreign_key "inline_threads", "users"
+  add_foreign_key "inline_threads", "users", column: "resolved_by_id"
+  add_foreign_key "mapping_fields", "mappings"
+  add_foreign_key "notifications", "users", column: "actor_id", on_delete: :cascade
+  add_foreign_key "notifications", "users", column: "recipient_id", on_delete: :cascade
+  add_foreign_key "subscriptions", "users"
+end

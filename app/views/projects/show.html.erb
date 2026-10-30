@@ -1,0 +1,59 @@
+<% content_for :title, current_project.name %>
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <%= link_to current_project.name, project_path(current_project) %>
+  </li>
+  <li class="breadcrumb-item active">
+    Overview
+  </li>
+</ol>
+
+<div class="row p-0">
+  <div class="col-12 col-lg-6 col-xxl-4">
+    <div class="content-container">
+      <section class="summary-panel">
+        <h4 class="header-underline">Issues so far</h4>
+
+        <%= turbo_frame_tag 'issues-summary',
+          class: 'issues-summary-frame',
+          data: {
+            controller: 'issues-summary',
+            issues_summary_url_value: project_dashboard_issues_path(current_project),
+            issues_summary_storage_key_value: "project.#{Dradis.edition}.#{dom_id(current_project)}.issues_grouping"
+          } do %>
+          <%= spinner_tag %>
+        <% end %>
+      </section>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6 col-xxl-8">
+    <div class="row p-0">
+      <div class="col-xxl-6">
+        <div class="content-container">
+          <%= render partial: 'projects/boards/summary' %>
+        </div>
+      </div>
+
+      <div class="col-xxl-6">
+        <div class="content-container">
+          <section class="summary-panel">
+            <% if @activities.any? %>
+              <h4 class="header-underline">Recent activity
+                <span class="actions pt-1">
+                  <div class="action">
+                    <%= link_to project_activities_path(current_project) do %>
+                      <i class="fa-solid fa-rss fa-fw"></i>All activity
+                    <% end %>
+                  </div>
+                </span>
+              </h4>
+            <% end %>
+            <%= render 'activities/feed', activities: @activities %>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

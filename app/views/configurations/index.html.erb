@@ -1,0 +1,32 @@
+<% content_for :title, 'Configuration Manager' %>
+
+<% content_for :breadcrumbs do %>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to current_project.name, project_path(current_project) %>
+    </li>
+    <li class="breadcrumb-item active">
+      Configuration Manager
+    </li>
+  </ol>
+<% end %>
+
+<% if @configs.count == 0 %>
+  <div class="content-container">
+    <h4 class="mb-3">You haven't enabled any add-ons that require configuration</h4>
+    <p>Import plugins like <a href="http://vulndbhq.com" target="_blank">VulnDB</a> or <a href="https://dradis.com/integrations/mediawiki.html?utm_source=ce&utm_medium=app" target="_blank">MediaWiki</a> require configuration and will display here when they are enabled.</p>
+    <p class="mb-0">For more details on enabling add-ons, see our <a href="https://dradis.com/ce/documentation/add-ons.html" target="_blank">Enable/Disable Add-ons</a> guide.</p>
+  </div>
+<% else %>
+  <div class="row p-0">
+    <div class="col-12">
+      <div class="content-container">
+        <%= form_tag project_configurations_path(current_project) do %>
+          <% @configs.each do |configuration| %>
+            <%= render partial: configuration[:type], object: configuration %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

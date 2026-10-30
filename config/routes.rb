@@ -1,0 +1,203 @@
+Rails.application.routes.draw do
+  get 'up', to: ->(env) { [204, {}, ['']] }
+
+  # ------------------------------------------------------------ Show Don't Gate
+  if !defined?(Dradis::Pro)
+    # Static pages
+    get 'projects', to: 'static_pages#projects_index', as: :static_projects
+    get 'projects/1/addons/issuelib', to: 'static_pages#issuelib_index', as: :static_issuelib
+    get 'projects/1/addons/issuelib/import', to: 'static_pages#issuelib_import', as: :static_issuelib_import
+    get 'projects/1/addons/remediationtracker', to: 'static_pages#remediationtracker_index', as: :static_remediationtracker
+  end
+
+  # ------------------------------------------------------------ Authentication
+  # Sign in / sign out
+  get '/login' => 'sessions#new'
+  get '/logout' => 'sessions#destroy'
+  resource :session
+
+  resources :comments
+
+  resources :inline_threads, only: [:index, :show, :create, :destroy], controller: 'inline_threads' do
+    resource :resolution, only: [:create, :destroy], controller: 'inline_threads/resolutions'
+    resources :comments, only: [:create], controller: 'inline_threads/comments'
+  end
+
+  # --------------------------------------------------------- User preferences
+  resource :preferences, only: [:update]
+
+  # ------------------------------------------------------------ Project routes
+  concern :multiple_destroy do
+    collection do
+      delete :multiple_destroy
+    end
+  end
+
+  concern :multiple_update do
+    collection do
+      patch :multiple_update
+    end
+  end
+
+  concern :previewable do
+    member do
+      post :preview
+    end
+  end
+
+  concern :lockable do |options|
+    resource :editing_session, only: :destroy, controller: options[:controller]
+  end
+
+  resources :notifications, only: [:index, :update]
+
+  resources :projects, only: [:index, :show] do
+    resources :activities, only: [:index] do
+      collection do
+        get :poll, constraints: { format: /js/ }
+      end
+    end
+
+    resources :boards do
+      resources :lists, except: [:index] do
+        resource :position, only: [:update], controller: 'lists/position'
+        resources :cards, except: [:index] do
+          resource :position, only: [:update], controller: 'cards/position'
+          resources :revisions, only: [:index, :show]
+          concerns :lockable, controller: 'cards/editing_sessions'
+        end
+      end
+    end
+
+    constraints id: %r{[(0-z)\/]+} do
+      resources :configurations, only: [:index, :update]
+    end
+
+    post :create_multiple_evidence, to: 'issues/evidence#create_multiple'
+
+    resources :issues, concerns: [:multiple_destroy, :previewable] do
+      collection do
+        post :import
+        resources :merge, only: [:new, :create], controller: 'issues/merge'
+      end
+
+      resources :evidence, concerns: :multiple_destroy, controller: 'issues/evidence', only: [:index, :new]
+      resources :nodes, only: [:show], controller: 'issues/nodes'
+      resources :revisions, only: [:index, :show]
+      concerns :lockable, controller: 'issues/editing_sessions'
+    end
+
+    resources :methodologies do
+      collection { post :preview }
+      member do
+        get :add
+        put :update_task
+      end
+    end
+
+    resources :nodes do
+      collection do
+        post :sort
+        post :create_multiple
+      end
+
+      member do
+        get :tree
+      end
+
+      resource :merge, only: [:create], controller: 'nodes/merge'
+
+      resources :notes, concerns: [:multiple_destroy, :previewable] do
+        resources :revisions, only: [:index, :show]
+        concerns :lockable, controller: 'notes/editing_sessions'
+      end
+
+      resources :evidence, except: :index, concerns: [:multiple_destroy, :previewable] do
+        resources :revisions, only: [:index, :show]
+        concerns :lockable, controller: 'evidence/editing_sessions'
+      end
+
+      constraints(filename: /.*/) do
+        resources :attachments, only: [:index, :show, :create, :destroy], param: :filename
+      end
+    end
+
+    resources :notifications, only: [:index, :update]
+
+    resources :revisions, only: [] do
+      member { post :recover }
+    end
+
+    namespace :dashboard, module: 'projects/dashboard' do
+      resources :issues, only: [:index]
+    end
+
+    resources :tags, except: [:show] do
+      collection { post :sort }
+    end
+
+    namespace :qa do
+      resources :issues, only: [:edit, :index, :show, :update], concerns: [:multiple_update, :previewable] do
+        resources :evidence, only: [:edit, :index, :show, :update], controller: 'issues/evidence', concerns: [:multiple_update, :previewable]
+      end
+    end
+
+    get 'search' => 'search#index'
+    get 'trash' => 'revisions#trash'
+
+    # ------------------------------------------------------- Export Manager
+    get '/export' => 'export#index', as: :export_manager
+
+    # ------------------------------------------------------- Upload Manager
+    get '/upload' => 'upload#index', as: :upload_manager
+    post '/upload' => 'upload#create'
+    post '/upload/parse' => 'upload#parse'
+  end
+
+  resources :console, only: [] do
+    collection { get :status }
+  end
+
+  resource :fields, only: [] do
+    collection do
+      get :field
+      post :form
+      post :source
+    end
+  end
+
+  namespace :setup, only: [:index] do
+    if defined?(Dradis::Pro)
+    else
+      resource :analytics, only: [:new, :create]
+      resource :password, only: [:new, :create]
+    end
+    resource :kit, only: [:new, :create]
+  end
+
+  resources :subscriptions, only: [:index, :create, :destroy]
+
+  # -------------------------------------------------------------- Static pages
+  resource :markup, controller: :markup, only: [] do
+    get :help
+    post :preview
+  end
+
+  if Rails.env.development?
+    get '/styles' => 'styles#index'
+  end
+
+  if defined?(Dradis::Pro)
+  else
+    root to: 'setup/passwords#new'
+  end
+
+  ErrorsController::SUPPORTED_ERRORS.each do |status_name, status_code|
+    match "/#{status_code}",
+      to: "errors##{status_name}",
+      via: :all,
+      defaults: { status_code: status_code }
+  end
+
+  mount ActionCable.server => '/cable'
+end

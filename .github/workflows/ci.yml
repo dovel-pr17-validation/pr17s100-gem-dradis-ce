@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    env:
+      IS_MERGE: ${{ github.base_ref == '' }}
+      # SHA is set to all 0s on the first push to a new branch. We set it to
+      # an empty string to ensure our fallback chain works as expected.
+      PREV_SHA: ${{ github.event.before != '0000000000000000000000000000000000000000' && github.event.before || '' }}
+      TARGET_BRANCH: ${{ github.base_ref }}
+      FALLBACK_BRANCH: 'origin/develop'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install sqlite3 dependencies
+        run: sudo apt-get install libsqlite3-dev
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          rubygems: 'latest'
+          bundler-cache: true
+      - name: Security audit dependencies
+        run: bundle exec bundler-audit --update --ignore CVE-2024-21510 CVE-2025-61921 CVE-2026-38969
+      - name: Security audit ruby
+        # These ignores can be removed once the Ruby version is upgraded (>= 3.4.8 for the
+        # 2025 CVEs; >= 4.0.3 for CVE-2026-41316, whose bundled erb we already override).
+        run: bundle exec ruby-audit update && bundle exec ruby-audit check --ignore CVE-2025-61594 CVE-2025-58767 CVE-2026-41316
+      - name: Security audit application code
+        run: bundle exec brakeman -q -w2
+      - name: Lint changed files
+        run: bin/rubocop-ci ${{ env.TARGET_BRANCH || env.PREV_SHA || env.FALLBACK_BRANCH }} ${{ env.IS_MERGE }}
+  rspec:
+    name: RSpec
+    needs: [lint]
+    runs-on: ubuntu-24.04
+    env:
+      RAILS_ENV: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Create database.yml
+        run: cp config/database.yml.template config/database.yml
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          rubygems: 'latest'
+          bundler-cache: true
+      - name: Prepare database
+        run: bundle exec rails db:prepare
+      - name: Run tests
+        run: bundle exec rspec spec engines -p
